@@ -5,6 +5,7 @@ import tempfile
 import pandas as pd
 import os
 from reportlab.lib.utils import ImageReader
+from PIL import Image
 
 
 # Função para gerar PDF
@@ -25,12 +26,20 @@ def generate_pdf(driver_list, monitor_name, font_size, file_name, column_positio
             for header, x_position in column_positions.items():
                 cnv.drawString(x_position, y, str(driver_data.get(header, '')))
 
+        # Abrir a imagem com PIL para redimensionamento
+        image_pil = Image.open("logo.png")
+        nova_largura = 100  # Defina a largura desejada
+        largura_original, altura_original = image_pil.size
+        nova_altura = int((altura_original / largura_original) * nova_largura)
+        image_redimensionada = image_pil.resize((nova_largura, nova_altura))
+
+        # Converta a imagem redimensionada em um objeto ImageReader
+        image = ImageReader(image_redimensionada)
+
         # Adiciona a imagem PNG (logo)
-        logo_path = "logo.png"  # Caminho para a imagem
-        logo_size = (80, 30)  # Tamanho da imagem (largura, altura)
-        logo_position = (10, A4[1] - logo_size[1] - 10)  # Posição da imagem (horizontal, vertical)
-        image = ImageReader(logo_path)
-        cnv.drawImage(image, logo_position[0], logo_position[1], width=logo_size[0], height=logo_size[1])
+        logo_width = nova_largura  # Largura redimensionada do logo
+        logo_position = (10, A4[1] - nova_altura - 10)  # Posição da imagem (horizontal, vertical)
+        cnv.drawImage(image, logo_position[0], logo_position[1], width=logo_width, height=nova_altura)
 
         # Adiciona o nome do motorista monitor no final
         if monitor_name:
@@ -102,8 +111,6 @@ def main():
     if monitor_name:
         st.subheader("Detalhes do Motorista Monitor")
         st.write(f"Nome do Motorista Monitor: {monitor_name}")
-
-
 
     # Defina as posições iniciais das colunas do cabeçalho
     column_positions = {
