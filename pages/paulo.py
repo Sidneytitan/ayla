@@ -26,7 +26,7 @@ def generate_pdf(driver_list, monitor_name, font_size, file_name, column_positio
                 cnv.drawString(x_position, y, str(driver_data.get(header, '')))
 
         # Adiciona a imagem PNG (logo)
-        logo_path = "https://github.com/Sidneytitan/ayla"  # Caminho para a imagem
+        logo_path = "https://github.com/Sidneytitan/ayla/raw/main/Logo.png"
         logo_size = (80, 30)  # Tamanho da imagem (largura, altura)
         logo_position = (10, A4[1] - logo_size[1] - 10)  # Posição da imagem (horizontal, vertical)
         image = ImageReader(logo_path)
