@@ -5,7 +5,6 @@ import tempfile
 import pandas as pd
 import os
 from reportlab.lib.utils import ImageReader
-from PIL import Image
 
 
 # Função para gerar PDF
@@ -26,20 +25,12 @@ def generate_pdf(driver_list, monitor_name, font_size, file_name, column_positio
             for header, x_position in column_positions.items():
                 cnv.drawString(x_position, y, str(driver_data.get(header, '')))
 
-        # Abrir a imagem com PIL para redimensionamento
-        image_pil = Image.open("logo.png")
-        nova_largura = 100  # Defina a largura desejada
-        largura_original, altura_original = image_pil.size
-        nova_altura = int((altura_original / largura_original) * nova_largura)
-        image_redimensionada = image_pil.resize((nova_largura, nova_altura))
-
-        # Converta a imagem redimensionada em um objeto ImageReader
-        image = ImageReader(image_redimensionada)
-
         # Adiciona a imagem PNG (logo)
-        logo_width = nova_largura  # Largura redimensionada do logo
-        logo_position = (10, A4[1] - nova_altura - 10)  # Posição da imagem (horizontal, vertical)
-        cnv.drawImage(image, logo_position[0], logo_position[1], width=logo_width, height=nova_altura)
+        logo_path = "https://github.com/Sidneytitan/ayla"  # Caminho para a imagem
+        logo_size = (80, 30)  # Tamanho da imagem (largura, altura)
+        logo_position = (10, A4[1] - logo_size[1] - 10)  # Posição da imagem (horizontal, vertical)
+        image = ImageReader(logo_path)
+        cnv.drawImage(image, logo_position[0], logo_position[1], width=logo_size[0], height=logo_size[1])
 
         # Adiciona o nome do motorista monitor no final
         if monitor_name:
@@ -52,7 +43,7 @@ def generate_pdf(driver_list, monitor_name, font_size, file_name, column_positio
             # Adiciona um risco com a distância especificada
             risco_x = x_position - 5
             risco_y = y + distance
-            cnv.line(risco_x, risco_y, risco_x + text_width + 3, risco_y)
+            cnv.line(risco_x, risco_y, risco_x + text_width + 5, risco_y)
 
         cnv.save()
 
@@ -112,6 +103,8 @@ def main():
         st.subheader("Detalhes do Motorista Monitor")
         st.write(f"Nome do Motorista Monitor: {monitor_name}")
 
+
+
     # Defina as posições iniciais das colunas do cabeçalho
     column_positions = {
         'ID': 50,
@@ -155,7 +148,7 @@ def main():
             else:
                 df = pd.DataFrame(st.session_state.driver_list)
                 df.to_excel(excel_file, index=False)
-            st.success(f"Dados dos motoristas salvos nos registros.")
+            st.success(f"Dados dos motoristas salvos em registo.")
 
 if __name__ == '__main__':
     main()
